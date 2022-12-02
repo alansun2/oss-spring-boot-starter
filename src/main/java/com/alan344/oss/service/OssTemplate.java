@@ -57,6 +57,7 @@ public class OssTemplate implements InitializingBean {
 
 	private AmazonS3 amazonS3;
 
+	// -------------------------------------------bucket----------------------------------------------------------------
 	/**
 	 * 创建bucket
 	 * @param bucketName bucket名称
@@ -81,9 +82,8 @@ public class OssTemplate implements InitializingBean {
 
 	/**
 	 * @param bucketName bucket名称
-	 * @see <a href=
-	 * "http://docs.aws.amazon.com/goto/WebAPI/s3-2006-03-01/ListBuckets">AWS API
-	 * Documentation</a>
+	 * @see <a href="http://docs.aws.amazon.com/goto/WebAPI/s3-2006-03-01/ListBuckets">AWS
+	 * API Documentation</a>
 	 */
 	public Optional<Bucket> getBucket(String bucketName) {
 		return amazonS3.listBuckets().stream().filter(b -> b.getName().equals(bucketName)).findFirst();
@@ -99,6 +99,8 @@ public class OssTemplate implements InitializingBean {
 		amazonS3.deleteBucket(bucketName);
 	}
 
+	// ---------------------------------------------list-object---------------------------------------------------------
+
 	/**
 	 * 根据文件前置查询文件
 	 * @param bucketName bucket名称
@@ -113,16 +115,17 @@ public class OssTemplate implements InitializingBean {
 	}
 
 	/**
-	 * 获取文件外链，只用于下载
-	 * @param bucketName bucket名称
-	 * @param objectName 文件名称
-	 * @param minutes 过期时间，单位分钟,请注意该值必须小于7天
-	 * @return url
-	 * @see AmazonS3#generatePresignedUrl(String bucketName, String key, Date expiration)
+	 * 根据文件前置查询文件
+	 * @param prefix 前缀
+	 * @see <a href=
+	 * "http://docs.aws.amazon.com/goto/WebAPI/s3-2006-03-01/ListObjects">AWS API
+	 * Documentation</a>
 	 */
-	public String getObjectURL(String bucketName, String objectName, int minutes) {
-		return getObjectURL(bucketName, objectName, Duration.ofMinutes(minutes));
+	public List<S3ObjectSummary> getAllObjectsByPrefixInDefaultBucket(String prefix) {
+		return this.getAllObjectsByPrefix(ossProperties.getBucketName(), prefix);
 	}
+
+	// ----------------------------------------------get-object---------------------------------------------------------
 
 	/**
 	 * 获取文件外链，只用于下载
@@ -137,15 +140,14 @@ public class OssTemplate implements InitializingBean {
 	}
 
 	/**
-	 * 获取文件上传外链，只用于上传
-	 * @param bucketName bucket名称
+	 * 获取文件外链，只用于下载
 	 * @param objectName 文件名称
-	 * @param minutes 过期时间，单位分钟,请注意该值必须小于7天
+	 * @param expires 过期时间,请注意该值必须小于7天
 	 * @return url
 	 * @see AmazonS3#generatePresignedUrl(String bucketName, String key, Date expiration)
 	 */
-	public String getPutObjectURL(String bucketName, String objectName, int minutes) {
-		return getPutObjectURL(bucketName, objectName, Duration.ofMinutes(minutes));
+	public String getObjectURLInDefaultBucket(String objectName, Duration expires) {
+		return getObjectURL(ossProperties.getBucketName(), objectName, expires);
 	}
 
 	/**
@@ -161,17 +163,14 @@ public class OssTemplate implements InitializingBean {
 	}
 
 	/**
-	 * 获取文件外链
-	 * @param bucketName bucket名称
+	 * 获取文件上传外链，只用于上传
 	 * @param objectName 文件名称
-	 * @param minutes 过期时间，单位分钟,请注意该值必须小于7天
-	 * @param method 文件操作方法：GET（下载）、PUT（上传）
+	 * @param expires 过期时间,请注意该值必须小于7天
 	 * @return url
-	 * @see AmazonS3#generatePresignedUrl(String bucketName, String key, Date expiration,
-	 * HttpMethod method)
+	 * @see AmazonS3#generatePresignedUrl(String bucketName, String key, Date expiration)
 	 */
-	public String getObjectURL(String bucketName, String objectName, int minutes, HttpMethod method) {
-		return getObjectURL(bucketName, objectName, Duration.ofMinutes(minutes), method);
+	public String getPutObjectURLInDefaultBucket(String objectName, Duration expires) {
+		return getPutObjectURL(ossProperties.getBucketName(), objectName, expires);
 	}
 
 	/**
@@ -195,6 +194,19 @@ public class OssTemplate implements InitializingBean {
 	}
 
 	/**
+	 * 获取文件外链
+	 * @param objectName 文件名称
+	 * @param expires 过期时间，请注意该值必须小于7天
+	 * @param method 文件操作方法：GET（下载）、PUT（上传）
+	 * @return url
+	 * @see AmazonS3#generatePresignedUrl(String bucketName, String key, Date expiration,
+	 * HttpMethod method)
+	 */
+	public String getObjectURLInDefaultBucket(String objectName, Duration expires, HttpMethod method) {
+		return this.getObjectURL(ossProperties.getBucketName(), objectName, expires, method);
+	}
+
+	/**
 	 * 获取文件URL
 	 * <p>
 	 * If the object identified by the given bucket and key has public read permissions
@@ -210,6 +222,19 @@ public class OssTemplate implements InitializingBean {
 	}
 
 	/**
+	 * 获取文件URL
+	 * <p>
+	 * If the object identified by the given bucket and key has public read permissions
+	 * (ex: {@link CannedAccessControlList#PublicRead}), then this URL can be directly
+	 * accessed to retrieve the object's data.
+	 * @param objectName 文件名称
+	 * @return url
+	 */
+	public String getObjectURLInDefaultBucket(String objectName) {
+		return this.getObjectURL(ossProperties.getBucketName(), objectName);
+	}
+
+	/**
 	 * 获取文件
 	 * @param bucketName bucket名称
 	 * @param objectName 文件名称
@@ -222,6 +247,18 @@ public class OssTemplate implements InitializingBean {
 	}
 
 	/**
+	 * 获取文件
+	 * @param objectName 文件名称
+	 * @return 二进制流
+	 * @see <a href= "http://docs.aws.amazon.com/goto/WebAPI/s3-2006-03-01/GetObject">AWS
+	 * API Documentation</a>
+	 */
+	public S3Object getObjectInDefaultBucket(String objectName) {
+		return this.getObject(ossProperties.getBucketName(), objectName);
+	}
+
+	// ------------------------------------------------put-object-------------------------------------------------------
+	/**
 	 * 上传文件
 	 * @param bucketName bucket名称
 	 * @param objectName 文件名称
@@ -230,6 +267,16 @@ public class OssTemplate implements InitializingBean {
 	 */
 	public void putObject(String bucketName, String objectName, InputStream stream) throws IOException {
 		putObject(bucketName, objectName, stream, stream.available(), "application/octet-stream");
+	}
+
+	/**
+	 * 上传文件
+	 * @param objectName 文件名称
+	 * @param stream 文件流
+	 * @throws IOException IOException
+	 */
+	public void putObjectInDefaultBucket(String objectName, InputStream stream) throws IOException {
+		putObject(ossProperties.getBucketName(), objectName, stream);
 	}
 
 	/**
@@ -243,6 +290,17 @@ public class OssTemplate implements InitializingBean {
 	public void putObject(String bucketName, String objectName, String contextType, InputStream stream)
 			throws IOException {
 		putObject(bucketName, objectName, stream, stream.available(), contextType);
+	}
+
+	/**
+	 * 上传文件 指定 contextType
+	 * @param objectName 文件名称
+	 * @param stream 文件流
+	 * @param contextType 文件类型
+	 * @throws IOException IOException
+	 */
+	public void putObjectInDefaultBucket(String objectName, String contextType, InputStream stream) throws IOException {
+		this.putObject(ossProperties.getBucketName(), objectName, contextType, stream);
 	}
 
 	/**
@@ -265,9 +323,23 @@ public class OssTemplate implements InitializingBean {
 		// reliably avoid a ResetException
 		putObjectRequest.getRequestClientOptions().setReadLimit(Long.valueOf(size).intValue() + 1);
 		return amazonS3.putObject(putObjectRequest);
-
 	}
 
+	/**
+	 * 上传文件
+	 * @param objectName 文件名称
+	 * @param stream 文件流
+	 * @param size 大小
+	 * @param contextType 类型
+	 * @see <a href= "http://docs.aws.amazon.com/goto/WebAPI/s3-2006-03-01/PutObject">AWS
+	 * API Documentation</a>
+	 */
+	public PutObjectResult putObjectInDefaultBucket(String objectName, InputStream stream, long size,
+			String contextType) {
+		return this.putObject(ossProperties.getBucketName(), objectName, stream, size, contextType);
+	}
+
+	// -------------------------------------------object-info-----------------------------------------------------------
 	/**
 	 * 获取文件信息
 	 * @param bucketName bucket名称
@@ -280,6 +352,18 @@ public class OssTemplate implements InitializingBean {
 	}
 
 	/**
+	 * 获取文件信息
+	 * @param objectName 文件名称
+	 * @see <a href= "http://docs.aws.amazon.com/goto/WebAPI/s3-2006-03-01/GetObject">AWS
+	 * API Documentation</a>
+	 */
+	public S3Object getObjectInfoInDefaultBucket(String objectName) {
+		return this.getObjectInfo(ossProperties.getBucketName(), objectName);
+	}
+
+	// ---------------------------------------------delete-object--------------------------------------------------------
+
+	/**
 	 * 删除文件
 	 * @param bucketName bucket名称
 	 * @param objectName 文件名称
@@ -289,6 +373,17 @@ public class OssTemplate implements InitializingBean {
 	 */
 	public void removeObject(String bucketName, String objectName) {
 		amazonS3.deleteObject(bucketName, objectName);
+	}
+
+	/**
+	 * 删除文件
+	 * @param objectName 文件名称
+	 * @see <a href=
+	 * "http://docs.aws.amazon.com/goto/WebAPI/s3-2006-03-01/DeleteObject">AWS API
+	 * Documentation</a>
+	 */
+	public void removeObjectInDefaultBucket(String objectName) {
+		this.removeObject(ossProperties.getBucketName(), objectName);
 	}
 
 	@Override

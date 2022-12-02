@@ -34,6 +34,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.InputStream;
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -141,7 +142,7 @@ public class OssEndpoint {
 		// Put Object info
 		responseBody.put("bucket", bucketName);
 		responseBody.put("object", objectName);
-		responseBody.put("url", ossTemplate.getObjectURL(bucketName, objectName, expires));
+		responseBody.put("url", ossTemplate.getObjectURL(bucketName, objectName, Duration.ofMinutes(expires)));
 		responseBody.put("expires", expires);
 		return responseBody;
 	}
@@ -153,7 +154,7 @@ public class OssEndpoint {
 		// Put Object info
 		responseBody.put("bucket", bucketName);
 		responseBody.put("object", objectName);
-		responseBody.put("url", ossTemplate.getPutObjectURL(bucketName, objectName, expires));
+		responseBody.put("url", ossTemplate.getPutObjectURL(bucketName, objectName, Duration.ofMinutes(expires)));
 		responseBody.put("expires", expires);
 		return responseBody;
 	}

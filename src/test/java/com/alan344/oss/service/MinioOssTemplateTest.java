@@ -19,6 +19,7 @@ import java.io.FileInputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.time.Duration;
 import java.util.Optional;
 
 /**
@@ -87,7 +88,7 @@ public class MinioOssTemplateTest {
 	 */
 	@Test
 	public void getObjectUrl() {
-		String url = ossTemplate.getObjectURL(TEST_BUCKET_NAME, TEST_OBJECT_NAME, 3);
+		String url = ossTemplate.getObjectURL(TEST_BUCKET_NAME, TEST_OBJECT_NAME, Duration.ofMinutes(3));
 		System.out.println("URL: " + url);
 		// 断言生成的链接必定包含过期时间字段
 		Assertions.assertTrue(url.contains("X-Amz-Expires"));
@@ -107,7 +108,8 @@ public class MinioOssTemplateTest {
 	@SneakyThrows
 	public void getObjectUpload() {
 		String testObjectContent = "it is a png";
-		String url = ossTemplate.getObjectURL(TEST_BUCKET_NAME, TEST_UPLOAD_OBJECT_NAME, 1, HttpMethod.PUT);
+		String url = ossTemplate.getObjectURL(TEST_BUCKET_NAME, TEST_UPLOAD_OBJECT_NAME, Duration.ofMinutes(1),
+				HttpMethod.PUT);
 		// 断言生成的链接必定包含过期时间字段
 		Assertions.assertTrue(url.contains("X-Amz-Expires"));
 		System.out.println("URL: " + url);
@@ -128,7 +130,8 @@ public class MinioOssTemplateTest {
 	@SneakyThrows
 	public void getObjectUploadExpired() {
 		String testObjectContent = "it is another png";
-		String url = ossTemplate.getObjectURL(TEST_BUCKET_NAME, TEST_UPLOAD_OBJECT_NAME, 1, HttpMethod.PUT);
+		String url = ossTemplate.getObjectURL(TEST_BUCKET_NAME, TEST_UPLOAD_OBJECT_NAME, Duration.ofMinutes(1),
+				HttpMethod.PUT);
 		// 断言生成的链接必定包含过期时间字段
 		Assertions.assertTrue(url.contains("X-Amz-Expires"));
 		System.out.println("URL: " + url);
