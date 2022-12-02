@@ -110,4 +110,18 @@
 			</plugin>
 		</plugins>
 	</build>
+
+	<distributionManagement>
+		<repository>
+			<id>nexus</id>
+			<name>nexus-release</name>
+			<url>https://nexus.tuoyang.vip:5086/repository/maven-releases/</url>
+		</repository>
+
+		<snapshotRepository>
+			<id>nexus</id>
+			<name>nexus-snapshot</name>
+			<url>https://nexus.tuoyang.vip:5086/repository/maven-snapshots/</url>
+		</snapshotRepository>
+	</distributionManagement>
 </project>
