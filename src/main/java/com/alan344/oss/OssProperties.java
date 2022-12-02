@@ -83,4 +83,5 @@ public class OssProperties {
 	 * 默认的存储桶名称
 	 */
 	private String bucketName;
+
 }
