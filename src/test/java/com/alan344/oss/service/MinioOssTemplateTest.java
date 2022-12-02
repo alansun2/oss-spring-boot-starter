@@ -1,4 +1,4 @@
-package com.pig4cloud.plugin.oss.service;
+package com.alan344.oss.service;
 
 import com.amazonaws.HttpMethod;
 import com.amazonaws.services.s3.model.Bucket;
@@ -27,7 +27,7 @@ import java.util.Optional;
  * @author lishangbu
  * @date 2021/1/25
  */
-@SpringBootApplication(scanBasePackages = "com.pig4cloud.plugin.oss")
+@SpringBootApplication(scanBasePackages = "com.alan344.oss")
 @SpringBootTest
 @ActiveProfiles("minio")
 public class MinioOssTemplateTest {

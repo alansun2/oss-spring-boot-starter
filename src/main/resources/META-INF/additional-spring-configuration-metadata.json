@@ -7,10 +7,10 @@
       "defaultValue": "false"
     },
     {
-      "name": "oss.http.prefix",
+      "name": "oss.controller.path",
       "type": "java.lang.String",
       "description": "oss http 路由端点前缀.",
-      "defaultValue": ""
+      "defaultValue": "oss"
     }
   ]
 }

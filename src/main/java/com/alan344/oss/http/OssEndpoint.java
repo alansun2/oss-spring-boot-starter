@@ -15,15 +15,13 @@
  * Author: lengleng (wangiegie@gmail.com)
  */
 
-package com.pig4cloud.plugin.oss.http;
+package com.alan344.oss.http;
 
+import com.alan344.oss.service.OssTemplate;
 import com.amazonaws.services.s3.model.Bucket;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
-import com.pig4cloud.plugin.oss.service.OssTemplate;
-import io.swagger.annotations.Api;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.Cleanup;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -50,11 +48,9 @@ import java.util.Map;
  */
 @Validated
 @AutoIgnore
-@RestController
 @RequiredArgsConstructor
-@RequestMapping("${oss.http.prefix:}/oss")
-@Api(tags = "oss:http接口")
-@Tag(name = "OssEndpoint", description = "oss:http接口")
+@RestController
+@RequestMapping("/${oss.controller.path:oss}")
 public class OssEndpoint {
 
 	/**

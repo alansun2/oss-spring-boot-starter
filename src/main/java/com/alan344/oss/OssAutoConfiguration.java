@@ -15,10 +15,10 @@
  * Author: lengleng (wangiegie@gmail.com)
  */
 
-package com.pig4cloud.plugin.oss;
+package com.alan344.oss;
 
-import com.pig4cloud.plugin.oss.http.OssEndpoint;
-import com.pig4cloud.plugin.oss.service.OssTemplate;
+import com.alan344.oss.http.OssEndpoint;
+import com.alan344.oss.service.OssTemplate;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
@@ -33,8 +33,9 @@ import org.springframework.context.annotation.Configuration;
  * @author 858695266
  * @author L.cm
  */
+@ConditionalOnProperty(prefix = OssProperties.PREFIX, name = "enable", havingValue = "true", matchIfMissing = true)
+@EnableConfigurationProperties(value = { OssProperties.class })
 @Configuration(proxyBeanMethods = false)
-@EnableConfigurationProperties({ OssProperties.class })
 public class OssAutoConfiguration {
 
 	/**
@@ -43,7 +44,6 @@ public class OssAutoConfiguration {
 	 */
 	@Bean
 	@ConditionalOnMissingBean(OssTemplate.class)
-	@ConditionalOnProperty(prefix = OssProperties.PREFIX, name = "enable", havingValue = "true", matchIfMissing = true)
 	public OssTemplate ossTemplate(OssProperties properties) {
 		return new OssTemplate(properties);
 	}

@@ -15,9 +15,10 @@
  * Author: lengleng (wangiegie@gmail.com)
  */
 
-package com.pig4cloud.plugin.oss;
+package com.alan344.oss;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -31,7 +32,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * <p>
  * bucket 设置公共读权限
  */
-@Data
+@Getter
+@Setter
 @ConfigurationProperties(prefix = OssProperties.PREFIX)
 public class OssProperties {
 
@@ -81,5 +83,4 @@ public class OssProperties {
 	 * 默认的存储桶名称
 	 */
 	private String bucketName;
-
 }

@@ -15,8 +15,9 @@
  * Author: lengleng (wangiegie@gmail.com)
  */
 
-package com.pig4cloud.plugin.oss.service;
+package com.alan344.oss.service;
 
+import com.alan344.oss.OssProperties;
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.HttpMethod;
 import com.amazonaws.auth.AWSCredentials;
@@ -27,7 +28,6 @@ import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.*;
-import com.pig4cloud.plugin.oss.OssProperties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.InitializingBean;
 
@@ -292,7 +292,7 @@ public class OssTemplate implements InitializingBean {
 	}
 
 	@Override
-	public void afterPropertiesSet() throws Exception {
+	public void afterPropertiesSet() {
 		ClientConfiguration clientConfiguration = new ClientConfiguration();
 		AwsClientBuilder.EndpointConfiguration endpointConfiguration = new AwsClientBuilder.EndpointConfiguration(
 				ossProperties.getEndpoint(), ossProperties.getRegion());
