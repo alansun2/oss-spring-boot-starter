@@ -2,6 +2,7 @@ package com.alan344.oss.service;
 
 import com.amazonaws.HttpMethod;
 import com.amazonaws.services.s3.model.Bucket;
+import com.amazonaws.services.s3.model.PutObjectResult;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.util.IOUtils;
 import lombok.SneakyThrows;
@@ -16,6 +17,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.util.ResourceUtils;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -52,12 +55,11 @@ public class MinioOssTemplateTest {
 	private OssTemplate ossTemplate;
 
 	@BeforeEach
-	@SneakyThrows
-	public void init() {
+	public void init() throws IOException {
 		ossTemplate.createBucket(TEST_BUCKET_NAME);
-		ossTemplate.putObject(TEST_BUCKET_NAME, TEST_OBJECT_NAME,
-				new FileInputStream(ResourceUtils.getFile(ResourceUtils.CLASSPATH_URL_PREFIX + TEST_OBJECT_NAME)));
-
+		final PutObjectResult putObjectResult = ossTemplate.putObject(TEST_BUCKET_NAME, TEST_OBJECT_NAME,
+			new FileInputStream(ResourceUtils.getFile(ResourceUtils.CLASSPATH_URL_PREFIX + TEST_OBJECT_NAME)));
+		int a = 1;
 	}
 
 	/**
