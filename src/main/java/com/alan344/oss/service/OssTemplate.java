@@ -390,7 +390,30 @@ public class OssTemplate implements InitializingBean {
 		return this.getObjectInfo(ossProperties.getBucketName(), objectName);
 	}
 
-	// ---------------------------------------------delete-object--------------------------------------------------------
+	//----------------------------------------------object-exist--------------------------------------------------------
+
+	/**
+	 * object 是否存在
+	 *
+	 * @param bucketName bucketName
+	 * @param objectName objectName
+	 * @return true if exist
+	 */
+	public boolean isExist(String bucketName, String objectName) {
+		return amazonS3.doesObjectExist(bucketName, objectName);
+	}
+
+	/**
+	 * object 是否存在
+	 *
+	 * @param objectName objectName
+	 * @return true if exist
+	 */
+	public boolean isExistInDefaultBucket(String objectName) {
+		return this.isExist(ossProperties.getBucketName(), objectName);
+	}
+
+	// ---------------------------------------------delete-object-------------------------------------------------------
 
 	/**
 	 * 删除文件
